@@ -1,5 +1,10 @@
 package co.teubi.raspberrypi.io;
 
+/**
+ * 
+ * @author Mario Gomez <mario.gomez_at_teubi.co>
+ *
+ */
 public enum PORTFUNCTION {
 	INPUT("IN"),
 	OUTPUT("OUT"),

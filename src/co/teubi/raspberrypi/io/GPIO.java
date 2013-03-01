@@ -8,6 +8,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.androidhive.jsonparsing.JSONParser;
 
+/**
+ * 
+ * @author Mario Gomez <mario.gomez_at_teubi.co>
+ *
+ */
 public class GPIO implements Runnable {
 
 	public static interface PortUpdateListener {
@@ -316,7 +321,7 @@ public class GPIO implements Runnable {
 	 * If there is any connection exceptions it generates
 	 * a "ConnectionEvent", this is useful to detect if
 	 * GPIO is disconnected from the target host. 
-	 * @param Port Target port
+	 * @param port Target port
 	 * @return current port value
 	 */
 	public PORTVALUE getValue(int port) {
@@ -461,7 +466,7 @@ public class GPIO implements Runnable {
 	 * getPinNum returns the physical pin number less one.
 	 * If the GPIO port doesn't have a pin assigned it returns
 	 * the value -1.
-	 * @param GPIO number
+	 * @param gpioNum GPIO number
 	 * @return Pin number
 	 */
 	public int getPinNum(int gpioNum) {

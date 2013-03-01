@@ -28,12 +28,27 @@ public class JSONParser {
 
 	}
 
+	/**
+	 * Creates a new JSONParser object that helps to make REST
+	 * requests and parse the results.
+	 * @param username Username for connection
+	 * @param pass Password for connection
+	 * @param scope Hostname
+	 */
 	public JSONParser(String username, String pass, String scope) {
 		this.username = username;
 		this.password = pass;
 		this.scope = scope;
 	}
 
+	/**
+	 * Makes a "POST" request to the specified URL and returs
+	 * a JSONObject.
+	 * @param url Target URL
+	 * @param port Target Port
+	 * @return Parsed response as a JSONObject
+	 * @throws Throws any exception caught on the request.
+	 */
 	public JSONObject postJSONFromURL(String url, int port) throws Exception {
 		InputStream is = null;
 		JSONObject jObj = null;
@@ -68,6 +83,15 @@ public class JSONParser {
 
 	}
 
+
+	/**
+	 * Makes a "GET" request to the specified URL and returns
+	 * a JSONArray.
+	 * @param url Target URL
+	 * @param port Target Port
+	 * @return JSON response parsed object
+	 * @throws Throws any exception caught on the request
+	 */
 	public JSONArray getJSONArrayFromUrl(String url, int port) throws Exception {
 		InputStream is = null;
 		JSONArray jArr = null;
@@ -102,6 +126,15 @@ public class JSONParser {
 
 	}
 
+
+	/**
+	 * Makes a "GET" request to the specified URL and returns
+	 * a JSONObject.
+	 * @param url Target URL
+	 * @param port Target Port
+	 * @return JSON response parsed object
+	 * @throws Throws any exception caught on the request
+	 */
 	public JSONObject getJSONFromUrl(String url, int port) throws Exception {
 		InputStream is = null;
 		JSONObject jObj = null;
