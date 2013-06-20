@@ -1,10 +1,5 @@
 package co.teubi.raspberrypi.io;
 
-/**
- * 
- * @author Mario Gomez <mario.gomez_at_teubi.co>
- *
- */
 public enum PORTVALUE {
 	LOGIC_0("0"),
 	LOGIC_1("1"),

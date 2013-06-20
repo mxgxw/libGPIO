@@ -6,13 +6,9 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.androidhive.jsonparsing.JSONParser;
 
-/**
- * 
- * @author Mario Gomez <mario.gomez_at_teubi.co>
- *
- */
 public class GPIO implements Runnable {
 
 	public static interface PortUpdateListener {
@@ -53,13 +49,6 @@ public class GPIO implements Runnable {
 	private boolean connected;
 	private ArrayList<GPIOPin> map;
 
-	/**
-	 * Initializes the GPIO object that allows you to
-	 * connect to WebIOPi. This object provides a series
-	 * of utility functions that help you to control WebIOPi
-	 * using REST calls.
-	 * @param info Connection information for the host runing WebIOPi
-	 */
 	public GPIO(ConnectionInfo info) {
 		conn = info;
 		status = new GPIOStatus();
@@ -100,38 +89,18 @@ public class GPIO implements Runnable {
 		map.add(new GPIOPin(i++,-1,PORTFUNCTION.UNKNOWN,PORTVALUE.UNKNOWN,"GPIO 07, ALT0 = SPI0_CE1_NN"));
 	}
 	
-	/**
-	 * getPinMap returns the current GPIO pin mapping
-	 * for the raspberry PI.
-	 * @return Current ping mapping as an ArrayList
-	 */
+	// Use this to force a reference map
 	public ArrayList<GPIOPin> getPinmap() {
 		return this.map;
 	}
 
-	/**
-	 * setPinmap forces the change of current pin mapping.
-	 * GPIO tries to acquire the current pin mapping from
-	 * WebIOPi. Sometimes, like when we cannot connect to
-	 * the remote host we want to be able to establish a
-	 * default port mapping for reference purposes.
-	 * @param map
-	 */
+	// Use this to force a reference map
 	public void setPinmap(ArrayList<GPIOPin> map) {
 		this.map = map;
 	}
 
-	/**
-	 * outputPulse sends a single pulse to the specified
-	 * GPIO port. This method works in an asynchronous way
-	 * starting a new Thread to make the request and ends.
-	 * <p>
-	 * If there is any connection exceptions it generates
-	 * a "ConnectionEvent", this is useful to detect if
-	 * GPIO is disconnected from the target host
-	 * @param port Port number to output the pulse
-	 */
-	public void outputPulse(final int port) {
+
+	public void OutputPulse(final int port) {
 		final GPIO self = this;
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -156,21 +125,7 @@ public class GPIO implements Runnable {
 	}
 	
 
-	/**
-	 * outputSequence sends a sequence of bits to the specified
-	 * GPIO port with the delay specified. The sequence is specified
-	 * as a string of 0 and 1 characters. It doesn't validate the
-	 * string sent. This method works in an asynchronous way
-	 * starting a new Thread to make the request and ends.
-	 * <p>
-	 * If there is any connection exceptions it generates
-	 * a "ConnectionEvent", this is useful to detect if
-	 * GPIO is disconnected from the target host.
-	 * @param port Port number to output the sequence
-	 * @param delay Delay (in milliseconds) between pulses
-	 * @param seq A string composed of 0 and 1 characters to output.
-	 */
-	public void outputSequence(final int port, final int delay, final String seq) {
+	public void OutputSequence(final int port, final int delay, final String seq) {
 		final GPIO self = this;
 		//TODO: Validate seq
 		Thread t = new Thread(new Runnable() {
@@ -196,21 +151,7 @@ public class GPIO implements Runnable {
 	}
 	
 
-	/**
-	 * outputPWMDutyCicle outputs a PWM signal to the specified
-	 * GPIO port using the specified duty cycle ratio. 0 equals
-	 * always off (0%) and 1 equals (100%) always on.
-	 * This method only works on ports configured as PWM.
-	 * This method works in an asynchronous way
-	 * starting a new Thread to make the request and ends.
-	 * <p>
-	 * If there is any connection exceptions it generates
-	 * a "ConnectionEvent", this is useful to detect if
-	 * GPIO is disconnected from the target host. 
-	 * @param port Target port number
-	 * @param ratio Pulse width ratio
-	 */
-	public void outputPWMDutyCycle(final int port, final float ratio) {
+	public void OutputPWMDutyCycle(final int port, final float ratio) {
 		final GPIO self = this;
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -235,21 +176,7 @@ public class GPIO implements Runnable {
 	}
 	
 
-	/**
-	 * outputPWMServoAngle outputs a PWM signal to the specified
-	 * GPIO port using the specified servo motor angle. The range
-	 * for "angle" could be from 0 to 359.
-	 * This method only works on ports configured as PWM.
-	 * This method works in an asynchronous way
-	 * starting a new Thread to make the request and ends.
-	 * <p>
-	 * If there is any connection exceptions it generates
-	 * a "ConnectionEvent", this is useful to detect if
-	 * GPIO is disconnected from the target host. 
-	 * @param port Target port number
-	 * @param angle Target angle in degrees
-	 */
-	public void outputPWMServoAngle(final int port, int angle) {
+	public void OutputPWMServoAngle(final int port, int angle) {
 		final int correctedAngle = (angle>359) ? angle%359 : angle;
 		final GPIO self = this;
 		Thread t = new Thread(new Runnable() {
@@ -273,21 +200,8 @@ public class GPIO implements Runnable {
 		});
 		t.start();
 	}
-
-	/**
-	 * setValue changes the current value on the GPIO port. 
-	 * You can call this method at any time but it only works
-	 * on ports configured as output.
-	 * This method works in an asynchronous way
-	 * starting a new Thread to make the request and ends.
-	 * <p>
-	 * If there is any connection exceptions it generates
-	 * a "ConnectionEvent", this is useful to detect if
-	 * GPIO is disconnected from the target host. 
-	 * @param port Target port number
-	 * @param value Target port value
-	 */
-	public void setValue(final int port, final int value) {
+	
+	public void SetValue(final int port, final int value) {
 		final GPIO self = this;
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -311,35 +225,11 @@ public class GPIO implements Runnable {
 		t.start();
 	}
 
-	/**
-	 * getValue returns the current port value.
-	 * It returns an enumeration representing the current
-	 * port value.
-	 * This method works in an asynchronous way
-	 * starting a new Thread to make the request and ends.
-	 * <p>
-	 * If there is any connection exceptions it generates
-	 * a "ConnectionEvent", this is useful to detect if
-	 * GPIO is disconnected from the target host. 
-	 * @param port Target port
-	 * @return current port value
-	 */
-	public PORTVALUE getValue(int port) {
+	public PORTVALUE GetValue(int port) {
 		return this.status.ports.get(port).value;
 	}
 
-	/**
-	 * setFunction changes the specified port function.
-	 * This method works in an asynchronous way
-	 * starting a new Thread to make the request and ends.
-	 * <p>
-	 * If there is any connection exceptions it generates
-	 * a "ConnectionEvent", this is useful to detect if
-	 * GPIO is disconnected from the target host. 
-	 * @param port Target port
-	 * @param funct New port function
-	 */
-	public void setFunction(final int port, final PORTFUNCTION funct) {
+	public void SetFunction(final int port, final PORTFUNCTION funct) {
 		final GPIO self = this;
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -365,52 +255,22 @@ public class GPIO implements Runnable {
 		t.start();
 	}
 
-	/**
-	 * getFunction returns the current port function.
-	 * It doesn't generates a REST request because it's supposed
-	 * that a background thread is updating the internal state
-	 * of GPIO ports
-	 * @param port Target port
-	 * @return Current port function
-	 */
-	public PORTFUNCTION getFunction(int port) {
-		return this.status.ports.get(port).function;
-	}
-	
-	/**
-	 * isConnected returns if GPIO is currently connected
-	 * to WebIOPi.
-	 * @return true on connected false otherwise.
-	 */
-	public boolean isConnected() {
+	public boolean getConnected() {
 		return this.connected;
 	}
 
+	public PORTFUNCTION GetFunction(int port) {
+		return this.status.ports.get(port).function;
+	}
 
-	/**
-	 * addPortUpdateListener adds update listeners to the
-	 * current GPIO connection. The listeners are called
-	 * each time that GPIO pools WebIOPi.
-	 * @param listener
-	 */
 	public void addPortUpdateListener(PortUpdateListener listener) {
 		portUpdateListeners.add(listener);
 	}
 
-	/**
-	 * removePortUpdateListener removes an update listener
-	 * from the current list of update listeners.
-	 * @param listener
-	 */
 	public void removePortUpdateListener(PortUpdateListener listener) {
 		portUpdateListeners.remove(listener);
 	}
 
-	/**
-	 * dispatchGPIOStatus sends the current status of the port
-	 * to all PortUpdateListeners registered in the instance.
-	 * @param Current GPIO status
-	 */
 	private void dispatchGPIOStatus(GPIOStatus status) {
 		for (int i = 0; i < portUpdateListeners.size(); i++) {
 			portUpdateListeners.get(i).onPortUpdated(status);
@@ -418,41 +278,20 @@ public class GPIO implements Runnable {
 	}
 	
 
-	/**
-	 * addPortConnectionListener adds a new collection listener.
-	 * This listeners are used to identify when GPIO disconnects
-	 * from WebIOPi.
-	 * @param listener to be added.
-	 */
 	public void addPortConnectionListener(ConnectionEventListener listener) {
 		connectionListeners.add(listener);
 	}
 
-	/**
-	 * removePortConnectionListener removes a connection listener
-	 * from the current list of connection listeners.
-	 * @param listener
-	 */
 	public void removePortConnectionListener(ConnectionEventListener listener) {
 		connectionListeners.remove(listener);
 	}
 
-	/**
-	 * dispatchConnectionEvent sends a failed connection message to
-	 * all connection listeners of this instance.
-	 * @param Error message
-	 */
 	private void dispatchConnectionEvent(String message) {
 		for (int i = 0; i < connectionListeners.size(); i++) {
 			connectionListeners.get(i).onConnectionFailed(message);
 		}
 	}
 
-	/**
-	 * isInteger verifies if the text specified is a number.
-	 * @param Text to verify
-	 * @return true if the text contains an integer value
-	 */
 	private boolean isInteger(String text) {
 		try {
 			Integer.parseInt(text); // 
@@ -462,13 +301,6 @@ public class GPIO implements Runnable {
 		}
 	}
 	
-	/**
-	 * getPinNum returns the physical pin number less one.
-	 * If the GPIO port doesn't have a pin assigned it returns
-	 * the value -1.
-	 * @param gpioNum GPIO number
-	 * @return Pin number
-	 */
 	public int getPinNum(int gpioNum) {
 		for(int i=0;i<map.size();i++ ) {
 			if(map.get(i).gpio==gpioNum) {
@@ -477,23 +309,8 @@ public class GPIO implements Runnable {
 		}
 		return -1; // -1 is used for not mapped pins.
 	}
-
-	/**
-	 * Main background task
-	 * GPIO is designed to work in background. It can be
-	 * started creating a new Thread. The main loop is
-	 * going to continue while it can connect to WebIOPi
-	 * and parse the resulting data.
-	 * <p>
-	 * After each successful request and parse of JSON
-	 * data it calls onPortUpdate for the PortUpdateListener
-	 * registered.
-	 * <p>
-	 * Each loop is treated as a "transaction", if any
-	 * exceptions are found it breaks the main loops and
-	 * ends the thread. onConnectionFailed is called on
-	 * all ConnnectionListeners if there any registered.
-	 */
+	
+	@Override
 	public void run() {
 		GPIOStatus status = new GPIOStatus();
 		JSONParser parser = new JSONParser(conn.username, conn.password,
@@ -512,15 +329,45 @@ public class GPIO implements Runnable {
 				// connection.
 				JSONObject obj = parser.getJSONFromUrl("http://" + conn.host
 						+ ":" + conn.port + "/*", conn.port);
+				
 
 				if (obj != null) {
-					status.UARTEnabled = (obj.getInt("UART0") == 0) ? false
+					if(obj.has("UART0")) {
+						status.UARTEnabled = (obj.getInt("UART0") == 0) ? false
 							: true;
-					status.SPIEnabled = (obj.getInt("SPI0") == 0) ? false
+					} else {
+						JSONObject values = obj.getJSONObject("GPIO");
+						JSONObject JSONPort = values.getJSONObject("14");
+						if(JSONPort.getString("function").equalsIgnoreCase("alt0")||
+							JSONPort.getString("function").equalsIgnoreCase("alt5")) {
+							status.UARTEnabled = true;
+						}
+					
+					}
+					if(obj.has("SPI0")) {
+						status.SPIEnabled = (obj.getInt("SPI0") == 0) ? false
 							: true;
-					status.I2CEnabled = ((obj.getInt("I2C0") == 0) ? false
+					} else {
+						JSONObject values = obj.getJSONObject("GPIO");
+						JSONObject JSONPort = values.getJSONObject("18");
+						if(JSONPort.getString("function").equalsIgnoreCase("alt4")) {
+							status.SPIEnabled = true;
+						}
+					}
+					if(obj.has("I2C0")||obj.has("I2C1")) {
+						status.I2CEnabled = ((obj.getInt("I2C0") == 0) ? false
 							: true)
 							| ((obj.getInt("I2C1") == 0) ? false : true);
+					} else {
+						JSONObject values = obj.getJSONObject("GPIO");
+						JSONObject JSONPort = values.getJSONObject("0");
+						JSONObject JSONPort2 = values.getJSONObject("2");
+						if(JSONPort.getString("function").equalsIgnoreCase("alt0") ||
+							JSONPort2.getString("function").equalsIgnoreCase("alt0")) {
+							status.I2CEnabled = true;
+						}
+						
+					}
 
 				}
 				
@@ -591,7 +438,7 @@ public class GPIO implements Runnable {
 				
 				// If we can get here everything is OK now.
 				status.map = this.map;
-				status.setConnected(true);
+				status.connected = true;
 				this.connected = true;
 				
 				this.dispatchGPIOStatus(status);

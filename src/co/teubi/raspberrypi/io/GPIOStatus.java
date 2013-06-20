@@ -2,13 +2,8 @@ package co.teubi.raspberrypi.io;
 
 import java.util.ArrayList;
 
-/**
- * Instantiate this class to store the internal state
- * of the GPIO port in the Raspberry PI.
- * @author Mario Gomez
- */
 public class GPIOStatus {
-	private boolean connected = false;
+	public boolean connected = false;
 	public boolean UARTEnabled = false;
 	public boolean SPIEnabled = false;
 	public boolean I2CEnabled = false;
@@ -32,7 +27,7 @@ public class GPIOStatus {
 	public void setConnected(boolean connected) {
 		this.connected = connected;
 	}
-	public boolean isConnected() {
+	public boolean getConnected() {
 		return this.connected;
 	}
 	

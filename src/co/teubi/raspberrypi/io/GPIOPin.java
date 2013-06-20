@@ -1,10 +1,5 @@
 package co.teubi.raspberrypi.io;
 
-/**
- * 
- * @author Mario Gomez <mario.gomez_at_teubi.co>
- *
- */
 public class GPIOPin {
 	public int number;
 	public int gpio;
