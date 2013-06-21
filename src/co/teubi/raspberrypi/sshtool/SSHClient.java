@@ -12,7 +12,7 @@ import co.teubi.abstractions.io.InputStreamExpectations;
 
 
 
-public class SSHClient implements Runnable {
+public class SSHClient implements Runnable,Expectator {
 	
 
 	private Timer watchdog;
@@ -30,12 +30,14 @@ public class SSHClient implements Runnable {
 	
 	private ArrayList<Expectation> expectations;
 	private ArrayList<String> commands;
+	
+	private int watchdogTimeout;
 
-	public void sendCommand(String command) {
+	public void queueCommand(String command) {
 		commands.add(command);
 	}
 
-	public void startWatchdog(int timer) {
+	private void startWatchdog(int timer) {
 		if (watchdog != null) {
 			watchdog.cancel();
 		}
@@ -48,6 +50,10 @@ public class SSHClient implements Runnable {
 			}
 
 		}), timer);
+	}
+	
+	public void setWatchdogTimeout(int time) {
+		this.watchdogTimeout = time;
 	}
 
 	public SSHClient(String host,String username,String password) {
@@ -119,7 +125,7 @@ public class SSHClient implements Runnable {
 
 			sshInputStream = new InputStreamExpectations(pin);
 			
-			sshInputStream.setExpectator(this.expectator);
+			sshInputStream.setExpectator(this);
 			sshInputStream.setExpectations(this.expectations);
 			
 			Thread t = new Thread(sshInputStream);
@@ -128,6 +134,8 @@ public class SSHClient implements Runnable {
 			bw = new BufferedWriter(new OutputStreamWriter(pout2));
 
 			shell.connect();
+			
+			this.startWatchdog(this.watchdogTimeout);
 			
 			for(int i=0;i<commands.size();i++) {
 				try {
@@ -138,16 +146,47 @@ public class SSHClient implements Runnable {
 					sshInputStream.getExpectator().onFailed();
 				}
 			}
+			
 
 			t.join(); // Wait reader thread for finish
+			// Cancel watchdog
+			
 		} catch (JSchException e) {
 			System.out.println(e.getMessage());
+			onFailed();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
+			onFailed();
 		} catch (InterruptedException e) {
 			System.out.println(e.getMessage());
+			onFailed();
 		}
 		
+	}
+
+	@Override
+	public void fulfill(Expectation exp) {
+		if(this.expectator!=null) {
+			this.expectator.fulfill(exp);
+		}
+		if(this.expectations.indexOf(exp)==(this.expectations.size()-1)) {
+			if(this.watchdog!=null) {
+				this.watchdog.cancel();
+			}
+			ses.disconnect();
+		}
+	}
+
+	@Override
+	public void onFailed() {
+		// TODO Auto-generated method stub
+		if(ses!=null) {
+			ses.disconnect();
+		
+		}
+		if(this.expectator!=null) {
+			this.expectator.onFailed();
+		}
 	}
 
 }
